@@ -5,8 +5,8 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 8080:8080
-      - 6000:6000
+      - 8383:8383
+      - 8384:8384
     volumes:
       - /db:/db
       - /scp:/scp
