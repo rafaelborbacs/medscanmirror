@@ -1,0 +1,12 @@
+version: '3'
+services:
+  medscanmirror:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+      - 6000:6000
+    volumes:
+      - /db:/db
+      - /scp:/scp
