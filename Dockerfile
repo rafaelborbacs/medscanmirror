@@ -28,6 +28,7 @@ COPY ./* ./medscanmirror/
 WORKDIR /home/medscanmirror
 RUN npm install
 RUN npm install -g pm2
+RUN unzip ./dcm4chee.zip
 
 RUN chmod +x ./entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
