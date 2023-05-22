@@ -1,8 +1,7 @@
 const killPort = require('kill-port')
 const express = require('express')
-const multer = require('multer')
-const upload = multer({ dest: 'uploads/' })
-const { notifyWS, notifyWSFile } = require('./wsmirror.js')
+const { notifyWS } = require('./wsmirror.js')
+const { getMirrorFiles } = require('./scpmirror.js')
 
 const startAPI = async () => {
     killPort(process.env.apiport)
@@ -17,14 +16,9 @@ const startAPI = async () => {
             res.setHeader('Access-Control-Allow-Headers', '*')
             next()
         })
-        api.post('/mirrorscp', upload.single('file'), async (req, res) => {
-            if (!req || !req.file)
-                return res.json({msg: 'No file uploaded'})
-            const rs = notifyWSFile(req)
-            if(rs)
-                res.status(200).json({msg: 'ok'})
-            else
-                res.status(500).send({msg: 'error'})
+        api.post('/mirrorfiles', async (req, res) => {
+            req.uuid = Math.random().toString(36).substring(2, 9)
+            getMirrorFiles(req, res)
         })
         api.all('*', async (req, res) => {
             req.uuid = Math.random().toString(36).substring(2, 9)

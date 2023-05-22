@@ -7,3 +7,6 @@ services:
     ports:
       - 8383:8383
       - 8384:8384
+      - 6060:6060
+    volumes:
+      - /mirrorscp:/mirrorscp

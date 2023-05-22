@@ -48,39 +48,4 @@ const notifyWS = (req) => {
     req.callback(false)
 }
 
-const chunkSize = 64 * 1024
-
-const notifyWSFile = (req) => new Promise((resolve, reject) => {
-    try {
-        const { headers: {authorization, name} } = req
-        for(const [ws, session] of sessions.entries()){
-            if(session && session.authorization === authorization && session.name === name){
-                if(ws.readyState === WebSocket.OPEN){
-                    const sourceFilePath = req.file.path
-                    console.log(`WS: ${session.sessionId} -> sending file ${sourceFilePath}`)
-                    const readStream = fs.createReadStream(sourceFilePath, { highWaterMark: chunkSize })
-                    readStream.on('data', (chunk) => ws.send(chunk))
-                    readStream.on('end', () => {
-                        console.log(`WS: ${session.sessionId} req: ${req.uuid} -> complete ${sourceFilePath}`)
-                        ws.send('<EOF></EOF>')
-                        readStream.destroy()
-                        try{ fs.unlink(sourceFilePath) }catch(err){}
-                        resolve(true)
-                    })
-                    readStream.on('error', err => {
-                        console.error(`WS: ${session.sessionId} file: ${sourceFilePath} -> error: ${err}`)
-                        readStream.destroy()
-                        try{ fs.unlink(sourceFilePath) }catch(err){}
-                        resolve(false)
-                    })
-                    break
-                }
-            }
-        }
-    } catch (error) {
-        console.error(`WS SCP file error: ${error}`)
-        resolve(false)
-    }
-})
-
-module.exports = { startWSServer, notifyWS, notifyWSFile }
+module.exports = { startWSServer, notifyWS }
