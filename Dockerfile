@@ -23,7 +23,7 @@ apt-get clean
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get install -y nodejs
 
-RUN mkdir /mirrorscp
+RUN mkdir /scpmirror
 RUN mkdir ./medscanmirror
 COPY ./* ./medscanmirror/
 WORKDIR /home/medscanmirror
