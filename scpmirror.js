@@ -76,15 +76,13 @@ const getMirrorFiles = async (req, res) => {
     res.setHeader('Content-Disposition', `attachment; filename="${uuid}.zip"`)
     res.setHeader('Content-Type', 'multipart/form-data')
     const readStream = fs.createReadStream(zipPath)
-    readStream.on('open', () => {
-        readStream.pipe(res)
-    })
+    readStream.on('open', () => readStream.pipe(res))
     readStream.on('error', (err) => {
-        console.error(err)
-        res.status(500).send({msg:`SCP files error: ${err}`})
+        console.error('Runtime mirror SCP error', err)
+        res.status(500).send({msg: `Mirror SCP error: ${err}`})
         try { readStream.end() } catch (error) {}
     })
-    removeDir(uuid)
+    readStream.on('end', () => removeDir(folder))
 }
 
 module.exports = { startSCP, getMirrorFiles }
