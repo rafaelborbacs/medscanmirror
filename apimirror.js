@@ -16,7 +16,7 @@ const startAPI = async () => {
             res.setHeader('Access-Control-Allow-Headers', '*')
             next()
         })
-        api.get('/status', async (req, res) => req.json({msg:'ok'}))
+        api.get('/status', async (req, res) => res.json({msg:'ok'}))
         api.post('/mirrorfiles', async (req, res) => {
             req.uuid = Math.random().toString(36).substring(2, 9)
             getMirrorFiles(req, res)
