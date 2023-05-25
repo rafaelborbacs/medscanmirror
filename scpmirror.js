@@ -80,7 +80,7 @@ const getMirrorFiles = async (req, res) => {
         console.error('Done sending mirror SCP files')
         exec(`rm -fr ${folder}`)
         for(const file of files)
-            fs.unlik(path.join(process.env.scpfolder, file))
+            fs.unlink(path.join(process.env.scpfolder, file))
     })
 }
 
