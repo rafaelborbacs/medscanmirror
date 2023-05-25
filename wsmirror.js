@@ -45,7 +45,6 @@ const notifyWS = (req) => {
             if(session && session.authorization === authorization && session.name === name){
                 if(ws && ws.readyState === WebSocket.OPEN){
                     ws.send(JSON.stringify({ url, headers: {authorization, name}, method, body, uuid }))
-                    console.log(`(1) SEND: sessionId: ${session.sessionId} ws: ${ws.readyState} payload: ${JSON.stringify({ url, headers: {authorization, name}, method, body, uuid })}`)
                     session.reqs.push(req)
                     return
                 }
