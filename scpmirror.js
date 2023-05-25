@@ -49,12 +49,6 @@ const copyFile = async (source, destination) => new Promise((resolve, reject) =>
     })
 })
 
-const removeDir = (folder) => {
-    exec(`rm -fr ${folder}`, (err, stdout, stderr) => {
-        if(err) console.error(`Error removing folder: ${folder}`)
-    })
-}
-
 const zipFolder = async (folder, zipPath, aetitle) => new Promise((resolve, reject) => {
     exec(`zip -erP ${aetitle} ${zipPath} ${folder}`, (err, stdout, stderr) => {
         if(err) console.error(`Error ziping folder: ${folder}`, err)
@@ -73,16 +67,20 @@ const getMirrorFiles = async (req, res) => {
         await copyFile(path.join(process.env.scpfolder, file), path.join(folder, file))
     const zipPath = path.join(folder, `${uuid}.zip`)
     await zipFolder(folder, zipPath, aetitle)
+    const readStream = fs.createReadStream(zipPath)
     res.setHeader('Content-Disposition', `attachment; filename="${uuid}.zip"`)
     res.setHeader('Content-Type', 'multipart/form-data')
-    const readStream = fs.createReadStream(zipPath)
     readStream.on('open', () => readStream.pipe(res))
     readStream.on('error', (err) => {
         console.error('Runtime mirror SCP error', err)
         res.status(500).send({msg: `Mirror SCP error: ${err}`})
         try { readStream.end() } catch (error) {}
     })
-    readStream.on('end', () => removeDir(folder))
+    readStream.on('end', () => {
+        exec(`rm -fr ${folder}`)
+        for(const file of files)
+            fs.unlik(path.join(process.env.scpfolder, file))
+    })
 }
 
 module.exports = { startSCP, getMirrorFiles }
