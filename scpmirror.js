@@ -77,6 +77,7 @@ const getMirrorFiles = async (req, res) => {
         try { readStream.end() } catch (error) {}
     })
     readStream.on('end', () => {
+        console.error('Done sending mirror SCP files')
         exec(`rm -fr ${folder}`)
         for(const file of files)
             fs.unlik(path.join(process.env.scpfolder, file))
