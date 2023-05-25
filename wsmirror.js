@@ -29,7 +29,7 @@ const startWSServer = () => {
             console.log(`WS: ${sessionId} -> closed`)
             for(const [wsEach, session] of sessions.entries()){
                 if(ws === wsEach){
-                    for(const req of session)
+                    for(const req of session.reqs)
                         req.callback(false)
                 }
             }
