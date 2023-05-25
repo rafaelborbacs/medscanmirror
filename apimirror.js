@@ -22,17 +22,13 @@ const startAPI = async () => {
             getMirrorFiles(req, res)
         })
         api.all('*', async (req, res) => {
-            console.log('(1)')
             req.uuid = Math.random().toString(36).substring(2, 9)
-            console.log('(2): ' + req.uuid)
             req.callback = (data) => {
-                console.log('(3): ', data)
                 if(data)
                     res.status(data.status).json(data.body)
                 else
                     res.status(404).send({msg: 'WS error: node not found'})
             }
-            console.log('(4): ' + req.uuid)
             notifyWS(req)
         })
         api.listen(process.env.apiport, () => console.log(`API Mirror listening on port ${process.env.apiport}`))
