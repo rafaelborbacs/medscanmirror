@@ -27,7 +27,13 @@ const startWSServer = () => {
         })
         ws.on('close', () => {
             console.log(`WS: ${sessionId} -> closed`)
-            sessions.delete(ws);
+            for(const [wsEach, session] of sessions.entries()){
+                if(ws === wsEach){
+                    for(const req of session)
+                        req.callback(false)
+                }
+            }
+            sessions.delete(ws)
         })
     })
 }
