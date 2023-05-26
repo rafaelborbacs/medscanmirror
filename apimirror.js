@@ -38,8 +38,9 @@ const startAPI = async () => {
             if(originalReq){
                 arrived.splice(arrived.indexOf(originalReq), 1)
                 processing.push(originalReq)
-                const { method, baseUrl, body, uuid, headers } = originalReq
-                res.json({ method, baseUrl, body, uuid, headers })
+                const { method, baseUrl, body, headers } = originalReq
+                const { authorization, name, uuid } = headers
+                res.json({ method, baseUrl, body, uuid, headers: { authorization, name, uuid } })
             }
             else res.json(false)
         })
