@@ -5,6 +5,24 @@ const { getMirrorFiles } = require('./scpmirror.js')
 const arrived = []
 const processing = []
 
+const min1 = 1 * 60 * 1000
+const min3 = 3 * 60 * 1000
+const timeoutReqs = () => {
+    const now = new Date()
+    for(const req of arrived){
+        if((now - req.createdat) > min1){
+            arrived.splice(arrived.indexOf(req), 1)
+            try { req.res.status(500).json({msg:'mirror GET timeout'}) } catch (err) {}
+        }
+    }
+    for(const req of processing){
+        if((now - req.createdat) > min3){
+            processing.splice(processing.indexOf(req), 1)
+            try { req.res.status(500).json({msg:'mirror PUT timeout'}) } catch (err) {}
+        }
+    }
+}
+
 const startAPI = async () => {
     killPort(process.env.apiport)
     .then(() => {})
@@ -49,9 +67,11 @@ const startAPI = async () => {
                 res.status(400).json({msg: 'authentication required'})
             req.headers.uuid = Math.random().toString(36).substring(2, 9)
             req.res = res
+            req.createdat = new Date()
             arrived.push(req)
         })
         api.listen(process.env.apiport, () => console.log(`API Mirror listening on port ${process.env.apiport}`))
+        setInterval(timeoutReqs, 60000)
     })
 }
 
