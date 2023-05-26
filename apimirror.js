@@ -20,15 +20,6 @@ const startAPI = async () => {
         })
         api.get('/status', async (req, res) => res.json({msg:'ok'}))
         api.post('/mirrorfiles', getMirrorFiles)
-        api.get('/get', (req, res) => {
-            const originalReq = arrived.find(r => r.headers.authentication === req.headers.authentication && r.headers.name === req.headers.name)
-            if(originalReq){
-                arrived.splice(arrived.indexOf(originalReq), 1)
-                processing.push(originalReq)
-                res.json(originalReq)
-            }
-            else res.json(false)
-        })
         api.put('/put', (req, res) => {
             const { authentication, name, uuid } = req.headers
             if(!authentication || !name || !uuid)
@@ -41,10 +32,21 @@ const startAPI = async () => {
             }
             else res.status(404).json({msg: 'not found'})
         })
+        api.get('/get', (req, res) => {
+            const originalReq = arrived.find(r => r.headers.authentication === req.headers.authentication && r.headers.name === req.headers.name)
+            if(originalReq){
+                arrived.splice(arrived.indexOf(originalReq), 1)
+                processing.push(originalReq)
+                const { method, baseUrl, body, uuid, headers } = originalReq
+                res.json({ method, baseUrl, body, uuid, headers })
+            }
+            else res.json(false)
+        })
         api.all('*', (req, res) => {
             if(!req || !req.headers || !req.headers.authentication || !req.headers.name)
                 res.status(400).json({msg: 'authentication required'})
             req.headers.uuid = Math.random().toString(36).substring(2, 9)
+            req.res = res
             arrived.push(req)
         })
         api.listen(process.env.apiport, () => console.log(`API Mirror listening on port ${process.env.apiport}`))
