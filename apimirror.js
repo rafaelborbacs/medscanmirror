@@ -21,6 +21,10 @@ const startAPI = async () => {
         api.get('/status', async (req, res) => res.json({msg:'ok'}))
         api.post('/mirrorfiles', getMirrorFiles)
         api.put('/put', (req, res) => {
+
+
+            console.log("[1]", req.headers, '[2]', !authentication || !name || !uuid)
+
             const { authentication, name, uuid } = req.headers
             if(!authentication || !name || !uuid)
                 return res.status(400).json({msg: 'authentication and uuid required'})
