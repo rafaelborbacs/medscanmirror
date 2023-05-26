@@ -28,6 +28,7 @@ const startAPI = async () => {
             if(originalReq){
                 processing.splice(processing.indexOf(originalReq), 1)
                 const { status, body } = req.body
+                originalReq.res.status(status).json(body)
                 res.status(status).json(body)
             }
             else res.status(404).json({msg: 'not found'})
