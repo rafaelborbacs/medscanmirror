@@ -23,13 +23,14 @@ const startAPI = async () => {
         api.put('/put', (req, res) => {
             const { authentication, name, uuid } = req.headers
             if(!authentication || !name || !uuid)
-                res.status(400).json({msg: 'authentication and uuid required'})
+                return res.status(400).json({msg: 'authentication and uuid required'})
             const originalReq = processing.find(r => r.authentication === authentication && r.name === name && r.uuid === uuid)
             if(originalReq){
                 processing.splice(processing.indexOf(originalReq), 1)
                 const { status, body } = req.body
                 originalReq.res.status(status).json(body)
                 res.status(status).json(body)
+                return
             }
             else res.status(404).json({msg: 'not found'})
         })
@@ -40,7 +41,7 @@ const startAPI = async () => {
                 processing.push(originalReq)
                 const { method, url, body, headers } = originalReq
                 const { authorization, name, uuid } = headers
-                res.json({ method, url, body, uuid, headers: { authorization, name, uuid } })
+                res.json({ method, url, body, headers: { authorization, name, uuid } })
             }
             else res.json(false)
         })
