@@ -24,7 +24,13 @@ const startAPI = async () => {
             const { authorization, name, uuid } = req.headers
             if(!authorization || !name || !uuid)
                 return res.status(400).json({msg: 'authentication and uuid required'})
-            const originalReq = processing.find(r => r.authorization === authorization && r.name === name && r.uuid === uuid)
+            
+            console.log('arrived:', arrived.length, 'processing:', processing.length)
+            
+            const originalReq = processing.find(r => r.headers.authorization === authorization && r.headers.name === name && r.headers.uuid === uuid)
+            
+            console.log('[PUT1]', originalReq.headers)
+            
             if(originalReq){
                 processing.splice(processing.indexOf(originalReq), 1)
                 const { status, body } = req.body
