@@ -4,9 +4,10 @@ const fs = require('fs')
 const Joi = require('joi-oid')
 const { exec, spawn } = require('child_process')
 
-const schemaGet = Joi.object({
+const schema = Joi.object({
     uuid: Joi.string().min(3).required(),
     aetitle: Joi.string().min(1).max(16).required(),
+    name: Joi.string().min(2).max(16),
     files: Joi.array().items(Joi.string().min(1)).min(1).required()
 }).unknown(false)
 
@@ -43,10 +44,7 @@ const mkdirNode = async (folder) => new Promise((resolve, reject) => {
 })
 
 const copyFile = async (source, destination) => new Promise((resolve, reject) => {
-    fs.copyFile(source, destination, err => {
-        if(err) console.error(`Error on copying ${source} to ${destination}`, err)
-        resolve()
-    })
+    fs.copyFile(source, destination, err => resolve())
 })
 
 const zipFolder = async (folder, zipPath, aetitle) => new Promise((resolve, reject) => {
@@ -57,7 +55,7 @@ const zipFolder = async (folder, zipPath, aetitle) => new Promise((resolve, reje
 })
 
 const getMirrorFiles = async (req, res) => {
-    const validation = schemaGet.validate(req.body)
+    const validation = schema.validate(req.body)
     if(validation.error)
         return res.status(400).send({validation, msg:'error'})
     const { uuid, aetitle, files } = req.body

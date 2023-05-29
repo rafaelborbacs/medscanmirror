@@ -7,5 +7,3 @@ services:
     ports:
       - 8383:8383
       - 6060:6060
-    volumes:
-      - /scpmirror:/scpmirror
