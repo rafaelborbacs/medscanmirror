@@ -6,7 +6,7 @@ const arrived = []
 const processing = []
 
 const min1 = 1 * 60 * 1000
-const min3 = 3 * 60 * 1000
+const min60 = 60 * 60 * 1000
 const timeoutReqs = () => {
     const now = new Date()
     for(const req of arrived){
@@ -16,7 +16,7 @@ const timeoutReqs = () => {
         }
     }
     for(const req of processing){
-        if((now - req.createdat) > min3){
+        if((now - req.createdat) > min60){
             processing.splice(processing.indexOf(req), 1)
             try { req.res.status(500).json({msg:'mirror PUT timeout'}) } catch (err) {}
         }

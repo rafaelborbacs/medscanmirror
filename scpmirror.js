@@ -44,7 +44,7 @@ const mkdirNode = async (folder) => new Promise((resolve, reject) => {
 })
 
 const copyFile = async (source, destination) => new Promise((resolve, reject) => {
-    fs.copyFile(source, destination, err => resolve())
+    fs.copyFile(source, destination, () => resolve())
 })
 
 const zipFolder = async (folder, zipPath, aetitle) => new Promise((resolve, reject) => {
@@ -71,14 +71,14 @@ const getMirrorFiles = async (req, res) => {
     readStream.on('open', () => readStream.pipe(res))
     readStream.on('error', (err) => {
         console.error('Runtime mirror SCP error', err)
-        res.status(500).send({msg: `Mirror SCP error: ${err}`})
         try { readStream.end() } catch (error) {}
+        exec(`rm -fr ${folder}`, () => {})
     })
     readStream.on('end', () => {
         console.error(`Done sending mirror SCP: ${zipPath}`)
         exec(`rm -fr ${folder}`, () => {})
-        for(const file of files)
-            fs.unlink(path.join(process.env.scpfolder, file), () => {})
+        //for(const file of files)
+        //    fs.unlink(path.join(process.env.scpfolder, file), () => {})
     })
 }
 
