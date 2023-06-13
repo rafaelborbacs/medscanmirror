@@ -35,7 +35,7 @@ const startAPI = async () => {
             res.setHeader('Access-Control-Allow-Methods', '*')
             res.setHeader('Access-Control-Allow-Headers', '*')
             if(!req || !req.headers || !req.headers.authorization || !req.headers.name)
-                return res.status(403).json({msg: 'authentication required'})
+                return res.json({msg: 'authentication required'})
             next()
         })
         api.get('/status', async (req, res) => res.json({msg:'ok'}))
