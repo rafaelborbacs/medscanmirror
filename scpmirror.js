@@ -43,11 +43,11 @@ const mkdirNode = async (folder) => new Promise((resolve, reject) => {
     })
 })
 
-const copyFile = async (source, destination) => new Promise((resolve, reject) => {
-    fs.copyFile(source, destination, () => resolve())
+const copyFile = async (source, destination) => new Promise(resolve => {
+    fs.copyFile(source, destination, resolve)
 })
 
-const zipFolder = async (folder, zipPath, aetitle) => new Promise((resolve, reject) => {
+const zipFolder = async (folder, zipPath, aetitle) => new Promise(resolve => {
     exec(`zip -erP ${aetitle} ${zipPath} ${folder}`, (err, stdout, stderr) => {
         if(err) console.error(`Error ziping folder: ${folder}`, err)
         resolve()
