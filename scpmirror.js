@@ -1,4 +1,3 @@
-const killPort = require('kill-port')
 const path = require('path')
 const fs = require('fs')
 const Joi = require('joi-oid')
@@ -19,17 +18,12 @@ const startSCP = () => {
         if(res) res.status(400).json({msg: 'SCP already running'})
     }
     else {
-        killPort(process.env.scpport)
-        .then(() => {})
-        .catch(err => {})
-        .finally(() => {
-            const args = `--accept-unknown --tls-aes -b ${process.env.scpport} --directory ${process.env.scpfolder}`
-            scp = spawn(storescp, args.split(' '), {shell:true})
-            scp.stdout.on('data', () => {})
-            scp.stderr.on('data', () => {})
-            scp.on('error', code => console.error(`SCP error: ${code}`))
-            console.log(`SCP started at on port ${process.env.scpport}`)
-        })
+        const args = `--accept-unknown --tls-aes -b ${process.env.scpport} --directory ${process.env.scpfolder}`
+        scp = spawn(storescp, args.split(' '), {shell:true})
+        scp.stdout.on('data', () => {})
+        scp.stderr.on('data', () => {})
+        scp.on('error', code => console.error(`SCP error: ${code}`))
+        console.log(`SCP started at on port ${process.env.scpport}`)
     }
 }
 
